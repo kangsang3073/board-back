@@ -3,13 +3,13 @@ package com.board.boardback.common;
 public interface ResponseCode {
 
     // HTTP Status 200
-    String SUCCES = "SU";
+    String SUCCESS = "SU";
 
     // HTTP Status 400
     String VALIDATION_FAILED = "VF";
     String DUPLICATE_EMAIL = "DE";
     String DUPLICATE_NICKNAME = "DN";
-    String DUPLICATE_NUMBER = "DT";
+    String DUPLICATE_TEL_NUMBER = "DT";
     String NOT_EXISTED_USER = "NU";
     String NOT_EXISTED_BOARD = "NB";
 
