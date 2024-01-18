@@ -60,16 +60,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     }
 
     private String parseBearerToken(HttpServletRequest request){
-        String authoriztion = request.getHeader("Authoriztion");
+        String authorization = request.getHeader("Authorization");
 
-        boolean hasAuthorization = StringUtils.hasText(authoriztion);
+        boolean hasAuthorization = StringUtils.hasText(authorization);
 
         if(!hasAuthorization) return null;
 
-        boolean isBearer = authoriztion.startsWith("Bearer ");
+        boolean isBearer = authorization.startsWith("Bearer ");
         if (!isBearer) return null;
 
-        String token = authoriztion.substring(7);
+        String token = authorization.substring(7);
 
         return token;
     }
