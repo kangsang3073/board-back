@@ -10,6 +10,7 @@ import com.board.boardback.dto.request.board.PostBoardRequestDto;
 import com.board.boardback.dto.request.board.PostCommentReqeustDto;
 import com.board.boardback.dto.response.ResponseDto;
 import com.board.boardback.dto.response.board.GetBoardResponseDto;
+import com.board.boardback.dto.response.board.GetCommentListResponseDto;
 import com.board.boardback.dto.response.board.GetFavoriteListResponseDto;
 import com.board.boardback.dto.response.board.PostBoardResponseDto;
 import com.board.boardback.dto.response.board.PostCommentResponseDto;
@@ -24,6 +25,7 @@ import com.board.boardback.repository.FavoriteRepository;
 import com.board.boardback.repository.ImageRepository;
 import com.board.boardback.repository.UserRepository;
 import com.board.boardback.repository.resultSet.GetBoardResultSet;
+import com.board.boardback.repository.resultSet.GetCommentListResultSet;
 import com.board.boardback.repository.resultSet.GetFavoriteListResultSet;
 import com.board.boardback.service.BoardService;
 
@@ -101,17 +103,37 @@ public class BoardServiceImplement implements BoardService{
                 ImageEntity imageEntity = new ImageEntity(boardNumber, image);
                 imageEntities.add(imageEntity);
             }
-
+            
             imageRepository.saveAll(imageEntities);
-
+            
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
+        
         return PostBoardResponseDto.success();
     }
     
+    
+    @Override
+    public ResponseEntity<? super GetCommentListResponseDto> getCommentList(Integer boardNumber) {
+
+        List<GetCommentListResultSet> resultSets = new ArrayList<>();
+        
+        try {
+
+            boolean existedBoard = boardRepository.existsByBoardNumber(boardNumber);
+            if(!existedBoard) return GetCommentListResponseDto.noExistBoard();
+
+            resultSets = commentRepository.getCommentList(boardNumber);
+            
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetCommentListResponseDto.success(resultSets);
+    }
+
     @Override
     public ResponseEntity<? super PostCommentResponseDto> postComment(PostCommentReqeustDto dto, Integer boardNumber ,String email) {
         try {
@@ -121,10 +143,10 @@ public class BoardServiceImplement implements BoardService{
 
             boolean existedUser = userRepository.existsByEmail(email);
             if(!existedUser) return PostCommentResponseDto.notExistUser();
-
+            
             CommentEntity commentEntity = new CommentEntity(dto, boardNumber, email);
             commentRepository.save(commentEntity);
-
+            
             boardEntity.increaseCommentCount();
             boardRepository.save(boardEntity);
             
